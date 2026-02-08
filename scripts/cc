@@ -1,0 +1,22 @@
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$repo_root"
+
+cmd="${1:-}"
+sub="${2:-}"
+
+die(){ echo "❌ $*" >&2; exit 1; }
+
+if [ -z "$cmd" ]; then
+  die "שימוש: cc task new <שם> | cc qa"
+fi
+
+if [ "$cmd" = "qa" ]; then
+  echo "=== QA ==="
+  test -f index.html && echo "✅ index.html" || die "אין index.html"
+  grep -q dir=rtl index.html && echo "✅ RTL" || die "RTL חסר"
+  grep -q radial-gradient index.html && echo "✅ radial-gradient" || die "אין radial-gradient"
+  grep -q localStorage index.html && echo "✅ localStorage" || die "אין localStorage"
+  grep -q 3
