@@ -198,5 +198,31 @@ AH.loadChapters();
   }catch(e){}
 })();
 
+
+/* === AH_QUESTIONS_LOADER_V1 === */
+(function(){
+  try{
+    if(!window.AH) window.AH = {};
+    AH.getSelectedChapter = function(){
+      try{ return localStorage.getItem("ah:selectedChapter") || "c1"; }
+      catch(e){ return "c1"; }
+    };
+    AH.loadQuestionsForGame = async function(){
+      const cid = AH.getSelectedChapter();
+      if(cid === "c1") return null;
+      try{
+        const r = await fetch("../data/chapters.json",{cache:"no-store"});
+        const j = await r.json();
+        const c = (j.chapters||[]).find(x=>x.id===cid);
+        if(c && Array.isArray(c.questions) && c.questions.length){
+          console.log("AH: loaded questions for", cid);
+          return c.questions;
+        }
+      }catch(e){ console.warn("AH: fallback to built-in questions", e); }
+      return null;
+    };
+  }catch(e){}
+})();
+
 </script>
 </body></html>
