@@ -265,5 +265,30 @@ AH.loadChapters();
   }catch(e){}
 })();
 
+
+/* === AH_PROGRESS_V1 === */
+(function(){
+  try{
+    if(!window.AH) window.AH = {};
+    AH.getChapterProgressKey = function(){
+      try{
+        const c = localStorage.getItem("ah:selectedChapter") || "c1";
+        return "ah:progress:" + c;
+      }catch(e){ return "ah:progress:c1"; }
+    };
+    AH.saveProgress = function(obj){
+      try{
+        localStorage.setItem(AH.getChapterProgressKey(), JSON.stringify(obj));
+      }catch(e){}
+    };
+    AH.loadProgress = function(){
+      try{
+        const raw = localStorage.getItem(AH.getChapterProgressKey());
+        return raw ? JSON.parse(raw) : {};
+      }catch(e){ return {}; }
+    };
+  }catch(e){}
+})();
+
 </script>
 </body></html>
