@@ -11,34 +11,24 @@
 - Root: https://yanivmizrachiy.github.io/ahuzim/
 - App:  https://yanivmizrachiy.github.io/ahuzim/app/
 
-## מבנה קנוני (Source of Truth)
-- `index.html` — כניסה “עולם של אחוזים” + redirect ל-/app
-- `app/index.html` — משחק (לוגיקה)
-- `docs/RULES.md` — דף כללים מאוחד (המסמך הזה)
-- `data/chapters.json` — שכבת נתונים קנונית לפרקים (כעת הכנה; חיבור למשחק בשלב הבא)
-- `scripts/qa_hard.sh` + `scripts/proof_server.sh` — אכיפת איכות והוכחה מהשרת
-- `.github/workflows/qa.yml` — QA+PROOF אוטומטי בכל push
-
 ## מצב נוכחי (Verified מהשרת)
 - כותרת “עולם של אחוזים” קיימת ב-root וב-app.
 - radial-gradient קיים.
 - localStorage קיים.
 - חוק “3 טעויות” קיים.
 - סימון תשובה נבחרת: .opt.sel + classList.add("sel").
+- ✅ AH_CHAPTERS_V1 קיים ב-app + טעינת data/chapters.json דרך fetch (לא שובר, fallback).
 
-## Roadmap קרוב (רק מה שמועיל)
-- חיבור המשחק לטעינת פרקים מתוך `data/chapters.json` עם fallback (כדי לא לשבור).
-- הוספת פרקים 2–10 כנתונים בלבד.
-- מסך בחירת פרק + סיכום פרק.
-
-## QA קשוח (חובה)
+## QA קשוח (חובה בכל שינוי)
 - radial-gradient
 - localStorage
 - "3 טעויות"
 - .opt.sel + classList.add("sel")
 - "עולם של אחוזים" (root+app)
-- קיום data/chapters.json (שכבת פרקים)
+- AH_CHAPTERS_V1 + fetch("../data/chapters.json")
 <!-- AUTO:END -->
+
+
 \n\n# RULES – כללי ברזל (מחייב)
 
 ## מקור אמת
