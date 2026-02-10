@@ -1,0 +1,150 @@
+<!doctype html><html lang="he" dir="rtl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>עולם של אחוזים</title>
+<meta name="theme-color" content="#0b2a1a">
+<style>
+:root{--t:#e9fff1;--m:rgba(233,255,241,.75);--line:rgba(255,255,255,.10);--good:#1fd27a;--bad:#ff4d4d}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;color:var(--t);font-family:system-ui,-apple-system,"Segoe UI","Heebo","Assistant",Arial,sans-serif;
+background:
+radial-gradient(900px 600px at 10% 0%, rgba(25,195,125,.18), transparent 60%),
+radial-gradient(900px 600px at 90% 10%, rgba(58,162,255,.14), transparent 60%),
+#07120c;
+}
+.wrap{height:100%;display:flex;align-items:center;justify-content:center;padding:14px}
+.card{width:min(980px,100%);height:min(820px,100%);border:1px solid var(--line);border-radius:26px;overflow:hidden;
+background:rgba(10,20,14,.70);box-shadow:0 10px 30px rgba(0,0,0,.45);display:flex;flex-direction:column}
+.top{padding:14px 16px;background:linear-gradient(180deg,#0c3c25,#0a2c1b);border-bottom:1px solid var(--line);
+display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.h0{font-weight:1000;font-size:30px;letter-spacing:.3px;line-height:1}
+.h1{font-weight:900;font-size:18px;margin-top:6px}
+.sub{font-size:12px;color:var(--m);margin-top:4px}
+.pill{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);padding:6px 10px;border-radius:999px;font-size:12px}
+.chat{flex:1;overflow:auto;padding:18px 14px}
+.row{display:flex;margin:10px 0}.in{justify-content:flex-start}.out{justify-content:flex-end}
+.bub{max-width:min(640px,92%);padding:12px 14px;border-radius:22px;border:1px solid rgba(255,255,255,.10);
+background:rgba(18,59,36,.95);line-height:1.35}
+.bub.out{background:rgba(26,90,55,.95)}
+.good{border-color:rgba(31,210,122,.55);background:rgba(31,210,122,.12)}
+.bad{border-color:rgba(255,77,77,.55);background:rgba(255,77,77,.10)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.opt{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--t);
+padding:12px;border-radius:18px;cursor:pointer;text-align:right;transition:.12s transform,.12s background,.12s outline}
+.opt:hover{background:rgba(255,255,255,.10);transform:translateY(-1px)}
+.opt:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.opt.sel{outline:3px solid rgba(123,220,255,.85);background:rgba(123,220,255,.14)}
+.comp{padding:12px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;background:rgba(10,20,14,.72)}
+.inp{flex:1;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--t);
+padding:12px;border-radius:16px;outline:none}
+.btn{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--t);padding:10px 12px;border-radius:14px;cursor:pointer}
+.btn.primary{border-color:rgba(31,210,122,.35);background:rgba(31,210,122,.12)}
+.btn.danger{border-color:rgba(255,77,77,.35);background:rgba(255,77,77,.10)}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<div class="wrap"><div class="card">
+  <div class="top">
+    <div>
+      <div class="h0">עולם של אחוזים</div>
+      <div class="h1">פרק 1 • אחוזים במשחק</div>
+      <div class="sub">המשחק נבנה על ידי הנברז • חוק המשחק: אחרי <b>3 טעויות</b> בלבד אני מגלה תשובה עם הסבר קצר</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="pill" id="score">נקודות: 0</span>
+      <button class="btn danger" id="reset">איפוס</button>
+    </div>
+  </div>
+
+  <div class="chat" id="chat"></div>
+
+  <div class="comp" id="composer">
+    <input class="inp" id="name" placeholder="כתוב השם שלך :" autocomplete="off">
+    <button class="btn primary" id="go">הכנס</button>
+  </div>
+</div></div>
+
+<script>
+(()=> {
+  const LS="ahuzim_v1";
+  const chat=document.getElementById("chat");
+  const scoreEl=document.getElementById("score");
+  const nameEl=document.getElementById("name");
+  const go=document.getElementById("go");
+  const reset=document.getElementById("reset");
+
+  let name="", score=0, idx=0, tries=0;
+
+  const bank=[
+    {t:"0.45 שווה לכמה אחוזים?", a:["45%","4.5%","0.45%","450%"], c:0, e:"0.45 הוא 45 מאיות → 45%."},
+    {t:"0.2 שווה לכמה אחוזים?", a:["2%","20%","200%","0.2%"], c:1, e:"0.2 הוא 20 מאיות → 20%."},
+    {t:"0.05 שווה לכמה אחוזים?", a:["5%","50%","0.5%","0.05%"], c:0, e:"0.05 הוא 5 מאיות → 5%."},
+    {t:"25% שווה לאיזה מספר?", a:["0.025","0.25","2.5","25"], c:1, e:"25% = 25/100 = 0.25."},
+    {t:"0.73 מתאים לאיזה אחוז?", a:["7.3%","73%","0.73%","730%"], c:1, e:"0.73 הוא 73 מאיות → 73%."},
+    {t:"0.01 שווה לכמה אחוזים?", a:["1%","10%","0.1%","0.01%"], c:0, e:"0.01 הוא מאית אחת → 1%."},
+    {t:"0.8 שווה לכמה אחוזים?", a:["8%","80%","0.8%","800%"], c:1, e:"0.8 הוא 80 מאיות → 80%."},
+    {t:"100% הוא…", a:["שלם","חצי","רבע","מאיות בלבד"], c:0, e:"100% הוא שלם."},
+    {t:"0.9 הוא כמה אחוזים?", a:["9%","90%","0.9%","99%"], c:1, e:"0.9 הוא 90 מאיות → 90%."},
+    {t:"שתי מאיות הן…", a:["0.02 = 2%","0.2 = 2%","0.002 = 2%","2.0 = 2%"], c:0, e:"2/100 = 0.02 = 2%."},
+  ];
+
+  const add=(html,dir="in",cls="")=>{
+    const row=document.createElement("div"); row.className="row "+(dir==="in"?"in":"out");
+    const b=document.createElement("div"); b.className="bub "+(dir==="out"?"out":"in")+(cls?(" "+cls):"");
+    b.innerHTML=html; row.appendChild(b); chat.appendChild(row);
+    chat.scrollTo({top:chat.scrollHeight,behavior:"smooth"}); return b;
+  };
+
+  const save=()=>localStorage.setItem(LS, JSON.stringify({name,score,idx,ts:Date.now()}));
+  const load=()=>{try{const r=localStorage.getItem(LS);return r?JSON.parse(r):null}catch(e){return null}};
+  const clear=()=>localStorage.removeItem(LS);
+  const setScore=n=>{score=Math.max(0,n); scoreEl.textContent="נקודות: "+score;};
+
+  function render(){
+    tries=0;
+    if(idx>=10){ add("סיימת את פרק 1! 🎉<br>הניקוד שלך: <b>"+score+"</b>","in","good"); save(); return; }
+    const q=bank[idx];
+    const b=add("<b>שאלה "+(idx+1)+" מתוך 10</b><div style=\"margin-top:8px;font-weight:800\">"+q.t+"</div>","in");
+    const g=document.createElement("div"); g.className="grid";
+    q.a.forEach((txt,i)=>{
+      const btn=document.createElement("button"); btn.className="opt"; btn.textContent=txt;
+      btn.onclick=()=>pick(q,i,g,btn); g.appendChild(btn);
+    });
+    b.appendChild(g); save();
+  }
+
+  function pick(q,i,g,btn){
+    add(q.a[i],"out");
+    [...g.querySelectorAll("button")].forEach(x=>x.disabled=true);
+    try{ btn.classList.add("sel"); }catch(e){}
+    if(i===q.c){ add("✅ נכון! "+q.e,"in","good"); idx++; setScore(score+10); setTimeout(render,650); return; }
+    tries++; setScore(score-(tries===1?4:tries===2?7:10));
+    if(tries===1) add("❌ לא נכון. רמז קטן: תזכור שאחוז = מאית.","in","bad");
+    else if(tries===2) add("❌ עדיין לא. רמז ישיר: מכפילים ב־100.","in","bad");
+    else { add("❌ אחרי <b>3 טעויות</b> בלבד: התשובה היא <b>"+q.a[q.c]+"</b><br>"+q.e,"in","bad"); idx++; setTimeout(render,850); return; }
+    setTimeout(render,650);
+  }
+
+  function welcome(){
+    chat.innerHTML="";
+    add("<b>אחוזים במשחק</b>","in");
+    add("כתוב את השם שלך ולחץ <b>הכנס</b>.","in");
+    document.getElementById("composer").style.display="flex";
+    nameEl.focus();
+  }
+
+  reset.onclick=()=>{ clear(); name=""; idx=0; setScore(0); nameEl.value=""; welcome(); };
+  go.onclick=()=>{ name=(nameEl.value||"").trim(); if(!name){nameEl.focus();return;}
+    document.getElementById("composer").style.display="none";
+    add("בהצלחה <b>"+name+"</b> ♥","in","good");
+    idx=0; setScore(0); setTimeout(render,600);
+  };
+
+  const s=load();
+  if(s && s.name){
+    name=s.name; idx=s.idx||0; setScore(s.score||0);
+    document.getElementById("composer").style.display="none";
+    add("<b>חזרת, "+name+" 🙂</b>","in"); add("ממשיך מאיפה שעצרת…","in");
+    setTimeout(render,600);
+  } else welcome();
+})();
+</script>
+</body></html>
