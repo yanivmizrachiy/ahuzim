@@ -290,5 +290,95 @@ AH.loadChapters();
   }catch(e){}
 })();
 
+
+/* === AH_PROGRESS_HOOK_V1 === */
+(function(){
+  try{
+    if(!window.AH) window.AH = {};
+    if(!AH.loadProgress || !AH.saveProgress || !AH.getChapterProgressKey) return;
+
+    function norm(x){ return (x||"").replace(/\s+/g," ").trim(); }
+
+    function getStats(){
+      const st = AH.loadProgress() || {};
+      if(typeof st.attempts!=="number") st.attempts=0;
+      if(typeof st.correct!=="number") st.correct=0;
+      if(typeof st.wrong!=="number") st.wrong=0;
+      if(typeof st.revealed!=="number") st.revealed=0;
+      st.updatedAt = Date.now();
+      return st;
+    }
+
+    function setStats(st){
+      try{ AH.saveProgress(st); }catch(e){}
+      try{ renderMiniBar(st); }catch(e){}
+    }
+
+    function renderMiniBar(st){
+      let el = document.getElementById("ahProgBar");
+      if(!el){
+        el = document.createElement("div");
+        el.id = "ahProgBar";
+        el.style.cssText =
+          "position:sticky;top:0;z-index:9999;" +
+          "margin:0 0 10px 0;padding:8px 10px;border-radius:14px;" +
+          "background:rgba(9,18,12,.72);backdrop-filter:blur(10px);" +
+          "border:1px solid rgba(123,220,255,.22);" +
+          "color:#e9fff1;font-weight:800;font-size:14px;" +
+          "box-shadow:0 8px 22px rgba(0,0,0,.35);";
+        // לשים אחרי פס הפרק (אם קיים), אחרת בראש body
+        const ch = document.getElementById("ahChapterBar");
+        if(ch && ch.parentNode) ch.parentNode.insertBefore(el, ch.nextSibling);
+        else document.body.insertBefore(el, document.body.firstElementChild);
+      }
+      const cid = (function(){ try{return localStorage.getItem("ah:selectedChapter")||"c1"}catch(e){return "c1"} })();
+      const acc = st.attempts ? Math.round((st.correct/st.attempts)*100) : 0;
+      el.innerHTML =
+        "📊 התקדמות בפרק <b>"+cid+"</b> — " +
+        "ניסיונות: <b>"+st.attempts+"</b> · " +
+        "נכון: <b>"+st.correct+"</b> · " +
+        "טעויות: <b>"+st.wrong+"</b> · " +
+        "נחשפה תשובה: <b>"+st.revealed+"</b> · " +
+        "דיוק: <b>"+acc+"%</b>";
+    }
+
+    // אתחול
+    renderMiniBar(getStats());
+
+    // מאזין להודעות חדשות בצ’אט (בלי להכיר את מבנה ה-DOM המדויק)
+    const seen = new Set();
+    const obs = new MutationObserver((mut)=>{
+      for(const m of mut){
+        for(const n of (m.addedNodes||[])){
+          if(!n || n.nodeType!==1) continue;
+          const txt = norm(n.textContent||"");
+          if(!txt) continue;
+          const key = txt.slice(0,120);
+          if(seen.has(key)) continue;
+
+          // מזהים תוצאה: ✅ / ❌
+          const isGood = txt.startsWith("✅");
+          const isBad  = txt.startsWith("❌");
+          if(!isGood && !isBad) continue;
+
+          seen.add(key);
+          const st = getStats();
+          st.attempts += 1;
+          if(isGood) st.correct += 1;
+          if(isBad)  st.wrong  += 1;
+
+          // מזהים “אחרי 3 טעויות” => revealed
+          if(txt.includes("3 טעויות") && txt.includes("התשובה")) st.revealed += 1;
+
+          setStats(st);
+        }
+      }
+    });
+
+    obs.observe(document.body, {subtree:true, childList:true});
+    console.log("AH_PROGRESS_HOOK_V1 ready");
+  }catch(e){}
+})();
+
 </script>
 </body></html>

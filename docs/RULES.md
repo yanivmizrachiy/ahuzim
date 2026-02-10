@@ -18,10 +18,8 @@
 - חוק “3 טעויות” קיים.
 - סימון תשובה נבחרת: .opt.sel + classList.add("sel").
 - ✅ AH_CHAPTERS_V1 קיים ב-app + fetch("../data/chapters.json") (fallback).
-
-## שכבת פרקים (Canonical Data)
-- קובץ אמת: data/chapters.json
-- כלי הוספה: scripts/add_chapter.py
+- ✅ AH_PROGRESS_V1 קיים (שמירה/טעינה לפי פרק).
+- ✅ AH_PROGRESS_HOOK_V1 קיים (ספירת ✅/❌ לפי פרק + פס התקדמות).
 
 ## QA קשוח (חובה בכל שינוי)
 - radial-gradient
@@ -30,6 +28,8 @@
 - .opt.sel + classList.add("sel")
 - "עולם של אחוזים" (root+app)
 - AH_CHAPTERS_V1 + fetch("../data/chapters.json")
+- AH_PROGRESS_V1
+- AH_PROGRESS_HOOK_V1 + ahProgBar
 - data/chapters.json (must exist + valid JSON)
 <!-- AUTO:END -->
 
