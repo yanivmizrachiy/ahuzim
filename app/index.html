@@ -64,7 +64,34 @@ padding:12px;border-radius:16px;outline:none}
 
 <script>
 (()=> {
-  const LS="ahuzim_v1";
+  
+/* AH_CHAPTERS_V1 — Safe chapters loader (non-breaking)
+   Loads data/chapters.json if available; otherwise falls back to current inline questions.
+*/
+const AH = window.AH || (window.AH = {});
+AH.chapters = null;
+AH.chapterId = "c1";
+AH.loadChapters = async () => {
+  try{
+    const r = await fetch("../data/chapters.json?v=" + Date.now(), {cache:"no-store"});
+    if(!r.ok) return null;
+    const j = await r.json();
+    if(!j || j.schema !== "ahuzim.chapters.v1") return null;
+    AH.chapters = j;
+    const ch = (j.chapters||[]).find(x=>x && x.status==="active") || (j.chapters||[])[0] || null;
+    if(ch && ch.id) AH.chapterId = ch.id;
+    return j;
+  }catch(e){
+    return null;
+  }
+};
+AH.getActiveChapter = () => {
+  if(!AH.chapters) return null;
+  const arr = AH.chapters.chapters || [];
+  return arr.find(x=>x && x.id===AH.chapterId) || arr.find(x=>x && x.status==="active") || arr[0] || null;
+};
+
+const LS="ahuzim_v1";
   const chat=document.getElementById("chat");
   const scoreEl=document.getElementById("score");
   const nameEl=document.getElementById("name");
@@ -146,5 +173,7 @@ padding:12px;border-radius:16px;outline:none}
     setTimeout(render,600);
   } else welcome();
 })();
+
+AH.loadChapters();
 </script>
 </body></html>
