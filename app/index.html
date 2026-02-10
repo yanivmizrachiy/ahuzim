@@ -40,7 +40,29 @@ padding:12px;border-radius:16px;outline:none}
 .btn.primary{border-color:rgba(31,210,122,.35);background:rgba(31,210,122,.12)}
 .btn.danger{border-color:rgba(255,77,77,.35);background:rgba(255,77,77,.10)}
 @media(max-width:720px){.grid{grid-template-columns:1fr}}
-</style></head><body>
+</style></head>\1\n<!-- AH_CHAPTER_UI_BASE_V0 -->
+<button id="ahChBtn" style="
+position:fixed;top:14px;left:14px;z-index:9999;
+border:0;border-radius:14px;padding:10px 12px;
+background:#0f1e2d;color:#eaf6ff;
+font-weight:900;box-shadow:0 10px 28px rgba(0,0,0,.25);
+">📚 פרקים</button>
+
+<div id="ahChModal" style="
+display:none;position:fixed;inset:0;z-index:9998;
+background:rgba(0,0,0,.55);
+">
+  <div id="ahChCard" style="
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(92vw,420px);
+  background:#121824;border-radius:18px;
+  padding:14px;color:#fff;">
+    <b>בחירת פרק</b>
+    <div id="ahChBody" style="margin-top:10px">נטען…</div>
+    <button id="ahChClose" style="margin-top:12px">סגור</button>
+  </div>
+</div>
+
 <div class="wrap"><div class="card">
   <div class="top">
     <div>
@@ -380,5 +402,17 @@ AH.loadChapters();
   }catch(e){}
 })();
 
-</script>
+/* AH_CHAPTER_UI_BASE_JS_V0 */
+(function(){
+  try{
+    var b=document.getElementById("ahChBtn");
+    var m=document.getElementById("ahChModal");
+    var c=document.getElementById("ahChClose");
+    if(!b||!m) return;
+    b.addEventListener("click", function(){ m.style.display="block"; }, true);
+    if(c) c.addEventListener("click", function(){ m.style.display="none"; }, true);
+    m.addEventListener("click", function(e){ if(e.target===m) m.style.display="none"; }, true);
+    document.addEventListener("keydown", function(e){ if(e.key==="Escape") m.style.display="none"; }, true);
+  }catch(e){}
+})();\n</script>
 </body></html>
