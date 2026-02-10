@@ -435,38 +435,53 @@ AH.loadChapters();
       }
 
       const chapters = (data && data.chapters) || [];
-      const cur = localStorage.getItem("ah:selectedChapter") || "c1";
+      const cur = (function(){ try{ return localStorage.getItem("ah:selectedChapter") || "c1"; }catch(e){ return "c1"; } })();
 
       box.innerHTML = "";
       chapters.forEach((c,i)=>{
-        const cid = c.id || ("c"+(i+1));
-        const title = c.title || cid;
+        const cid = (c && c.id) ? c.id : ("c"+(i+1));
+        const title = (c && c.title) ? c.title : cid;
 
-        const isCur = (cid===cur);
-        const isDone = localStorage.getItem("ah:done:"+cid)==="1";
-        const locked = !isCur and not isDone and cid!==cur;
+        const isCur = (cid === cur);
+        let isDone = false;
+        try{ isDone = localStorage.getItem("ah:done:"+cid) === "1"; }catch(e){}
+
+        const locked = (!isCur && !isDone && cid !== cur);
 
         const btn = document.createElement("button");
-        btn.style.cssText = "all:unset;display:flex;justify-content:space-between;align-items:center;width:100%;padding:10px;border-radius:12px;margin-bottom:8px;cursor:pointer;background:rgba(255,255,255,.06)";
-        if(locked){ btn.style.opacity=".5"; btn.style.cursor="not-allowed"; }
+        btn.setAttribute("data-chapter-id", cid);
+        btn.style.cssText =
+          "all:unset;display:flex;justify-content:space-between;align-items:center;" +
+          "width:100%;padding:10px;border-radius:12px;margin-bottom:8px;" +
+          "cursor:pointer;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);";
+
+        if(locked){
+          btn.style.opacity = ".55";
+          btn.style.cursor = "not-allowed";
+          btn.setAttribute("data-locked","1");
+        }
 
         const icon = isDone ? "✅" : isCur ? "▶️" : "🔒";
-        btn.innerHTML = "<span>"+icon+" "+title+"</span><span>›</span>";
+        btn.innerHTML = "<span>"+icon+" "+title+"</span><span style=\"opacity:.9;font-weight:900\">›</span>";
 
         btn.addEventListener("click", function(){
-          if(locked) return;
-          localStorage.setItem("ah:selectedChapter", cid);
-          location.reload();
+          if(btn.getAttribute("data-locked")==="1") return;
+          try{ localStorage.setItem("ah:selectedChapter", cid); }catch(e){}
+          try{ location.reload(); }catch(e){}
         });
 
         box.appendChild(btn);
       });
+
+      if(!chapters.length){
+        box.innerHTML = "⚠️ אין פרקים בקובץ chapters.json";
+      }
     };
 
-    const btn = document.getElementById("ahChBtn");
-    if(btn){
-      btn.addEventListener("click", function(){
-        setTimeout(()=>AH.renderChapterList(), 50);
+    const btn0 = document.getElementById("ahChBtn");
+    if(btn0){
+      btn0.addEventListener("click", function(){
+        setTimeout(function(){ try{ AH.renderChapterList(); }catch(e){} }, 60);
       }, true);
     }
 
