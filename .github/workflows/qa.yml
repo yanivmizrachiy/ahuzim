@@ -1,0 +1,19 @@
+name: QA + PROOF (ahuzim)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: QA HARD (local)
+        run: bash scripts/qa_hard.sh
+
+      - name: PROOF (server)
+        run: bash scripts/proof_server.sh

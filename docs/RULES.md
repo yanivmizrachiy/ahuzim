@@ -1,7 +1,7 @@
 <!-- AUTO:BEGIN -->
 # ahuzim — דף כללים מאוחד (Canonical)
 
-זה דף האמת של הפרויקט. כל מה שנבנה + כל מה שנבנה בהמשך חייב להופיע כאן.
+זה דף האמת של הפרויקט. כל מה שנבנה + כל מה שנבנה בהמשך חייב להיות מתועד כאן.
 
 ## עקרונות ברזל
 - GitHub הוא מקור האמת. כל שינוי: pull --rebase → commit → push.
@@ -13,7 +13,7 @@
 - Root: https://yanivmizrachiy.github.io/ahuzim/
 - App:  https://yanivmizrachiy.github.io/ahuzim/app/
 
-## מצב נוכחי (Verified מהשרת)
+## מצב נוכחי (Verified)
 - כותרת “עולם של אחוזים” קיימת ב-root וב-app.
 - radial-gradient קיים.
 - localStorage קיים.
