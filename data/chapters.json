@@ -14,7 +14,34 @@
       "title": "פרק 2 — אחוז מתוך כמות",
       "status": "draft",
       "notes": "כולל ניסוחים מילוליים. בשלב הבא נוסיף questions[].",
-      "questions": []
+      "questions": [
+        {
+          "id": "c2-q1",
+          "type": "percent_of_quantity",
+          "text": "כמה הם 25% מתוך 80?",
+          "choices": [
+            "20",
+            "25",
+            "30",
+            "40"
+          ],
+          "correct": 0,
+          "explain": "25% הם רבע. רבע מ־80 הוא 20."
+        },
+        {
+          "id": "c2-q2",
+          "type": "percent_of_quantity",
+          "text": "כמה הם 10% מתוך 70?",
+          "choices": [
+            "5",
+            "7",
+            "10",
+            "14"
+          ],
+          "correct": 1,
+          "explain": "10% הם עשירית. עשירית מ־70 היא 7."
+        }
+      ]
     }
   ]
 }
