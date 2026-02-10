@@ -175,5 +175,28 @@ const LS="ahuzim_v1";
 })();
 
 AH.loadChapters();
+
+// AH_SELECTED_CHAPTER_V1
+(function(){
+  try{
+    const cid = localStorage.getItem("ahuzim.selectedChapterId");
+    if(!cid || cid==="c1") return;
+
+    const titles = {
+      c2: "פרק 2 — אחוז מתוך כמות"
+    };
+    const title = titles[cid] || ("פרק: "+cid);
+
+    const bar = document.createElement("div");
+    bar.style.cssText =
+      "position:sticky;top:0;z-index:50;padding:8px 10px;" +
+      "background:#10261b;color:#e9fff1;font-weight:900;text-align:center;" +
+      "box-shadow:0 6px 20px rgba(0,0,0,.35)";
+    bar.innerHTML = "📘 פרק נוכחי: <span style=opacity:.95>"+title+"</span>";
+
+    document.body.insertBefore(bar, document.body.firstElementChild);
+  }catch(e){}
+})();
+
 </script>
 </body></html>
