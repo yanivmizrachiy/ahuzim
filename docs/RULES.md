@@ -17,7 +17,15 @@
 - localStorage קיים.
 - חוק “3 טעויות” קיים.
 - סימון תשובה נבחרת: .opt.sel + classList.add("sel").
-- ✅ AH_CHAPTERS_V1 קיים ב-app + טעינת data/chapters.json דרך fetch (לא שובר, fallback).
+- ✅ AH_CHAPTERS_V1 קיים ב-app + טעינת data/chapters.json דרך fetch (fallback).
+
+## שכבת פרקים (Canonical Data)
+- קובץ אמת: data/chapters.json
+- כלי הוספה: scripts/add_chapter.py
+
+### רשימת פרקים (Snapshot)
+- c1: פרק 1 — אחוזים (המשחק הנוכחי) (active)
+- c2: פרק 2 — אחוז מתוך כמות (draft)
 
 ## QA קשוח (חובה בכל שינוי)
 - radial-gradient
@@ -26,6 +34,7 @@
 - .opt.sel + classList.add("sel")
 - "עולם של אחוזים" (root+app)
 - AH_CHAPTERS_V1 + fetch("../data/chapters.json")
+- data/chapters.json (must exist + valid JSON)
 <!-- AUTO:END -->
 
 

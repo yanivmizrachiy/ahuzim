@@ -1,12 +1,19 @@
 {
   "schema": "ahuzim.chapters.v1",
-  "updatedAt": 1770729905,
+  "updatedAt": 1770733725,
   "chapters": [
     {
       "id": "c1",
       "title": "פרק 1 — אחוזים (המשחק הנוכחי)",
       "status": "active",
       "notes": "זה פרק-על (source=app/index.html). בשלב הבא נחלץ שאלות לתוך JSON ונחבר את המשחק לנתונים.",
+      "questions": []
+    },
+    {
+      "id": "c2",
+      "title": "פרק 2 — אחוז מתוך כמות",
+      "status": "draft",
+      "notes": "כולל ניסוחים מילוליים. בשלב הבא נוסיף questions[].",
       "questions": []
     }
   ]
