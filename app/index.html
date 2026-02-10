@@ -414,5 +414,64 @@ AH.loadChapters();
     m.addEventListener("click", function(e){ if(e.target===m) m.style.display="none"; }, true);
     document.addEventListener("keydown", function(e){ if(e.key==="Escape") m.style.display="none"; }, true);
   }catch(e){}
-})();\n</script>
+})();\n
+/* === AH_CHAPTER_LIST_DYNAMIC_V1 === */
+(function(){
+  try{
+    if(!window.AH) window.AH = {};
+
+    AH.renderChapterList = async function(){
+      const box = document.getElementById("ahChBody");
+      if(!box) return;
+      box.innerHTML = "טוען פרקים…";
+
+      let data;
+      try{
+        const r = await fetch("../data/chapters.json", {cache:"no-store"});
+        data = await r.json();
+      }catch(e){
+        box.innerHTML = "❌ שגיאה בטעינת פרקים";
+        return;
+      }
+
+      const chapters = (data && data.chapters) || [];
+      const cur = localStorage.getItem("ah:selectedChapter") || "c1";
+
+      box.innerHTML = "";
+      chapters.forEach((c,i)=>{
+        const cid = c.id || ("c"+(i+1));
+        const title = c.title || cid;
+
+        const isCur = (cid===cur);
+        const isDone = localStorage.getItem("ah:done:"+cid)==="1";
+        const locked = !isCur and not isDone and cid!==cur;
+
+        const btn = document.createElement("button");
+        btn.style.cssText = "all:unset;display:flex;justify-content:space-between;align-items:center;width:100%;padding:10px;border-radius:12px;margin-bottom:8px;cursor:pointer;background:rgba(255,255,255,.06)";
+        if(locked){ btn.style.opacity=".5"; btn.style.cursor="not-allowed"; }
+
+        const icon = isDone ? "✅" : isCur ? "▶️" : "🔒";
+        btn.innerHTML = "<span>"+icon+" "+title+"</span><span>›</span>";
+
+        btn.addEventListener("click", function(){
+          if(locked) return;
+          localStorage.setItem("ah:selectedChapter", cid);
+          location.reload();
+        });
+
+        box.appendChild(btn);
+      });
+    };
+
+    const btn = document.getElementById("ahChBtn");
+    if(btn){
+      btn.addEventListener("click", function(){
+        setTimeout(()=>AH.renderChapterList(), 50);
+      }, true);
+    }
+
+  }catch(e){}
+})();
+
+</script>
 </body></html>
