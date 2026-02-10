@@ -17,15 +17,11 @@
 - localStorage קיים.
 - חוק “3 טעויות” קיים.
 - סימון תשובה נבחרת: .opt.sel + classList.add("sel").
-- ✅ AH_CHAPTERS_V1 קיים ב-app + טעינת data/chapters.json דרך fetch (fallback).
+- ✅ AH_CHAPTERS_V1 קיים ב-app + fetch("../data/chapters.json") (fallback).
 
 ## שכבת פרקים (Canonical Data)
 - קובץ אמת: data/chapters.json
 - כלי הוספה: scripts/add_chapter.py
-
-### רשימת פרקים (Snapshot)
-- c1: פרק 1 — אחוזים (המשחק הנוכחי) (active)
-- c2: פרק 2 — אחוז מתוך כמות (draft)
 
 ## QA קשוח (חובה בכל שינוי)
 - radial-gradient
