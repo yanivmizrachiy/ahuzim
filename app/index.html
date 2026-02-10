@@ -244,5 +244,26 @@ AH.loadChapters();
   }
 })();
 
+
+/* === AH_STATS_PER_CHAPTER_V1 === */
+(function(){
+  try{
+    if(!window.AH) window.AH = {};
+    const key = (cid)=>"ah:stats:"+cid;
+
+    AH.getStats = function(cid){
+      try{ return JSON.parse(localStorage.getItem(key(cid))) || {a:0,c:0,w:0}; }
+      catch(e){ return {a:0,c:0,w:0}; }
+    };
+
+    AH.saveStats = function(cid, ok){
+      const s = AH.getStats(cid);
+      s.a++;
+      ok ? s.c++ : s.w++;
+      localStorage.setItem(key(cid), JSON.stringify(s));
+    };
+  }catch(e){}
+})();
+
 </script>
 </body></html>
