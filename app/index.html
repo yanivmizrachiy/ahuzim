@@ -224,5 +224,25 @@ AH.loadChapters();
   }catch(e){}
 })();
 
+
+/* === AH_RENDER_DYNAMIC_V1 === */
+(async function(){
+  try{
+    if(!window.AH || !AH.loadQuestionsForGame) return;
+    const dyn = await AH.loadQuestionsForGame();
+    if(Array.isArray(dyn) && dyn.length){
+      console.log("AH: switching to dynamic questions");
+      window.Q = dyn.map(q=>({
+        t: q.text,
+        a: q.choices,
+        c: q.correct,
+        e: q.explain || ""
+      }));
+    }
+  }catch(e){
+    console.warn("AH: dynamic render failed, fallback", e);
+  }
+})();
+
 </script>
 </body></html>
