@@ -488,5 +488,47 @@ AH.loadChapters();
   }catch(e){}
 })();
 
+
+/* === AH_CHAPTER_STATUS_API_V1 === */
+(function(){
+  try{
+    if(!window.AH) window.AH = {};
+
+    AH.keys = AH.keys || {
+      selected: "ah:selectedChapter",
+      donePrefix: "ah:done:",
+      progPrefix: "ah:progress:"
+    };
+
+    AH.getSelectedChapter = function(){
+      try{ return localStorage.getItem(AH.keys.selected) || "c1"; }
+      catch(e){ return "c1"; }
+    };
+
+    AH.setSelectedChapter = function(cid){
+      try{ localStorage.setItem(AH.keys.selected, cid || "c1"); }catch(e){}
+    };
+
+    AH.isChapterDone = function(cid){
+      try{ return localStorage.getItem(AH.keys.donePrefix + (cid||"c1")) === "1"; }
+      catch(e){ return false; }
+    };
+
+    AH.setChapterDone = function(cid, v){
+      try{ localStorage.setItem(AH.keys.donePrefix + (cid||"c1"), v ? "1" : "0"); }catch(e){}
+    };
+
+    AH.getChapterStatus = function(cid){
+      try{
+        var cur = AH.getSelectedChapter();
+        cid = cid || cur;
+        if(cid === cur) return "current";
+        if(AH.isChapterDone(cid)) return "done";
+        return "locked";
+      }catch(e){ return "locked"; }
+    };
+
+  }catch(e){}
+})();
 </script>
 </body></html>
