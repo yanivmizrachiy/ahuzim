@@ -91,3 +91,7 @@
 ## חוק עבודה
 - פריט backlog אחד בכל פעם
 - כל פריט = Commit מסודר + Proof (RAW+PAGES)
+
+---
+
+Last Sync: 2026-02-11 16:26 UTC
