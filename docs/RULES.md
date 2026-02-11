@@ -1,55 +1,101 @@
-<!-- AUTO:BEGIN -->
-# ahuzim — דף כללים מאוחד (Canonical)
+# ahuzim — RULES (מקור אמת / Canonical)
+
+> מסמך זה הוא מקור האמת היחיד.
+> כל שינוי באתר חייב להתיישר איתו, וכל שדרוג חייב לעדכן את המסמך הזה באותו קומיט.
+
+---
 
 ## עקרונות ברזל
-- GitHub הוא מקור האמת. כל שינוי: pull --rebase → commit → push.
-- לא שוברים תכונות קיימות. רק שדרוגים מצטברים.
-- כל שינוי חייב QA מקומי + PROOF מהשרת (curl+grep).
-- app/index.html הוא מקור האמת למשחק. .meta/ זה גיבויים בלבד.
+- GitHub (branch main) הוא מקור האמת.
+- אין דמו. אין ניחושים. כל פיצ’ר חייב לעבוד ב־GitHub Pages.
+- לא שוברים תכונות קיימות — רק שדרוגים מצטברים.
+- כל שינוי מחייב:
+  - QA מקומי (grep / sanity)
+  - PROOF מהשרת (RAW + PAGES עם cache-buster)
+- `app/index.html` הוא מקור האמת של האפליקציה.
+- `data/chapters.json` הוא מקור האמת לתוכן.
 
-## Entrypoints רשמיים
+---
+
+## קישורים רשמיים
 - Root: https://yanivmizrachiy.github.io/ahuzim/
 - App:  https://yanivmizrachiy.github.io/ahuzim/app/
+- Data: https://raw.githubusercontent.com/yanivmizrachiy/ahuzim/main/data/chapters.json
 
-## מצב נוכחי (Verified מהשרת)
-- כותרת “עולם של אחוזים” קיימת ב-root וב-app.
-- radial-gradient קיים.
-- localStorage קיים.
-- חוק “3 טעויות” קיים.
-- סימון תשובה נבחרת: .opt.sel + classList.add("sel").
-- ✅ AH_CHAPTERS_V1 קיים ב-app + fetch("../data/chapters.json") (fallback).
-- ✅ AH_PROGRESS_V1 קיים (שמירה/טעינה לפי פרק).
-- ✅ AH_PROGRESS_HOOK_V1 קיים (ספירת ✅/❌ לפי פרק + פס התקדמות).
+---
 
-## QA קשוח (חובה בכל שינוי)
-- radial-gradient
-- localStorage
-- "3 טעויות"
-- .opt.sel + classList.add("sel")
-- "עולם של אחוזים" (root+app)
-- AH_CHAPTERS_V1 + fetch("../data/chapters.json")
+## מבנה נתונים מחייב: chapters.json
+- JSON תקין בלבד.
+- מבנה:
+  - chapters: [{ id, title, questions: [{id,type,text,choices,correct,explain}] }]
+- כל שאלה:
+  - text בעברית
+  - choices מערך
+  - correct אינדקס מספרי
+
+---
+
+## markers מחייבים (לא מוחקים)
+- AH_CHAPTERS_V1
+- AH_RENDER_DYNAMIC_V1
 - AH_PROGRESS_V1
-- AH_PROGRESS_HOOK_V1 + ahProgBar
-- data/chapters.json (must exist + valid JSON)
-<!-- AUTO:END -->
+- AH_PROGRESS_HOOK_V1 (ahProgBar)
+- AH_CHAPTER_UI_BASE_V0
+- AH_CHAPTER_UI_BASE_JS_V0
+- AH_CHAPTER_LIST_DYNAMIC_V1
 
+---
 
-\n\n# RULES – כללי ברזל (מחייב)
+## סטטוס מערכת (אמת בלבד)
 
-## מקור אמת
-- GitHub repo הוא מקור האמת היחיד.
-- כל שינוי חייב Commit אמיתי ל-main.
+### ✅ קיים (Verified)
+- טעינת chapters.json בפועל (fetch)
+- שאלות דינמיות לפי פרק
+- החלפת Q לפי פרק נבחר
+- שמירת התקדמות לפי פרק (localStorage)
+- פס התקדמות (ahProgBar)
+- כפתור + מודל לבחירת פרק
+- רשימת פרקים דינמית מתוך chapters.json
 
-## תיעוד לפני קוד
-- לפני שינוי התנהגות/מבנה/מסכים: לעדכן docs/ (STATE/RULES/ROADMAP).
+### 🟡 חלקי
+- סטטוס פרק (locked / current / done) — לוגיקה קיימת אך לא מאוחדת
+- אין API אחד ברור לסטטוס פרק
 
-## איסור שבירה
-- אסור למחוק/להחליף דברים שעובדים.
-- רק שדרוגים תוספתיים, שמרניים, עם QA.
+### ❌ לא קיים
+- completion אמיתי עם סף (למשל 80%)
+- פתיחת פרק הבא רק אחרי completion
+- סטטיסטיקות לתלמיד
+- מצב מורה / ניהול
 
-## סנכרון
-- לפני push: git pull --rebase
-- אחרי שינוי: QA מקומי + commit + push
+---
 
-## נקודת כניסה
-- חייב להיות URL רשמי אחד שמוגדר ב-README.
+## QA קשוח (חובה)
+- כותרת “עולם של אחוזים” קיימת
+- fetch("../data/chapters.json") קיים
+- כל markers קיימים בקובץ
+- chapters.json תקין
+- פתיחה/סגירה של מודל פרקים עובדת
+- PROOF:
+  - RAW: grep markers
+  - PAGES: cache-buster + retries
+
+---
+
+## Backlog רשמי (פריט אחד בכל פעם)
+
+### הבא לביצוע
+- API אחיד לסטטוס פרק:
+  - AH.isChapterDone(cid)
+  - AH.getChapterStatus(cid) → done/current/locked
+  - מקור אמת יחיד למפתחות localStorage
+
+### אחריו
+- completion אמיתי לפרק (אחוז + מינימום שאלות)
+- פתיחת פרק הבא אוטומטית
+- מסך סטטיסטיקות בסיסי
+
+---
+
+## חוק עבודה
+אם זה לא כתוב כאן — זה לא קיים.
+אם זה קיים — לא בונים שוב.
