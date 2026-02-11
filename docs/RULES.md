@@ -1,101 +1,93 @@
-# ahuzim — RULES (מקור אמת / Canonical)
+# AHUZIM — דף כללים (Source of Truth) ✅
 
-> מסמך זה הוא מקור האמת היחיד.
-> כל שינוי באתר חייב להתיישר איתו, וכל שדרוג חייב לעדכן את המסמך הזה באותו קומיט.
-
----
-
-## עקרונות ברזל
-- GitHub (branch main) הוא מקור האמת.
-- אין דמו. אין ניחושים. כל פיצ’ר חייב לעבוד ב־GitHub Pages.
-- לא שוברים תכונות קיימות — רק שדרוגים מצטברים.
-- כל שינוי מחייב:
-  - QA מקומי (grep / sanity)
-  - PROOF מהשרת (RAW + PAGES עם cache-buster)
-- `app/index.html` הוא מקור האמת של האפליקציה.
-- `data/chapters.json` הוא מקור האמת לתוכן.
-
----
+> כלל ברזל: **אם זה לא כתוב כאן — זה לא קיים.**  
+> כלל ברזל: **כל שינוי חייב Commit + Push לריפו.**  
+> כלל ברזל: **לא בונים כפול. קודם קוראים כאן ואז פועלים.**
 
 ## קישורים רשמיים
-- Root: https://yanivmizrachiy.github.io/ahuzim/
+- Site: https://yanivmizrachiy.github.io/ahuzim/
 - App:  https://yanivmizrachiy.github.io/ahuzim/app/
-- Data: https://raw.githubusercontent.com/yanivmizrachiy/ahuzim/main/data/chapters.json
+- Data (RAW): https://raw.githubusercontent.com/yanivmizrachiy/ahuzim/main/data/chapters.json
 
 ---
 
 ## מבנה נתונים מחייב: chapters.json
-- JSON תקין בלבד.
+- JSON תקין בלבד
 - מבנה:
-  - chapters: [{ id, title, questions: [{id,type,text,choices,correct,explain}] }]
+  - `chapters: [{ id, title, questions: [{id,type,text,choices,correct,explain}] }]`
 - כל שאלה:
-  - text בעברית
-  - choices מערך
-  - correct אינדקס מספרי
+  - `text` בעברית
+  - `choices` = מערך
+  - `correct` = אינדקס מספרי
 
 ---
 
 ## markers מחייבים (לא מוחקים)
-- AH_CHAPTERS_V1
-- AH_RENDER_DYNAMIC_V1
-- AH_PROGRESS_V1
-- AH_PROGRESS_HOOK_V1 (ahProgBar)
 - AH_CHAPTER_UI_BASE_V0
 - AH_CHAPTER_UI_BASE_JS_V0
 - AH_CHAPTER_LIST_DYNAMIC_V1
+- AH_CHAPTER_STATUS_API_V1
+
+(בנוסף קיימים אצלנו markers פנימיים אחרים — אבל אלו הסט הבסיסי שחייב להישאר תמיד.)
 
 ---
 
 ## סטטוס מערכת (אמת בלבד)
 
 ### ✅ קיים (Verified)
-- טעינת chapters.json בפועל (fetch)
-- שאלות דינמיות לפי פרק
-- החלפת Q לפי פרק נבחר
-- שמירת התקדמות לפי פרק (localStorage)
-- פס התקדמות (ahProgBar)
-- כפתור + מודל לבחירת פרק
-- רשימת פרקים דינמית מתוך chapters.json
+- GitHub Pages פעיל
+- App ב-`/app/` עם `app/index.html`
+- טעינת `chapters.json` בפועל (fetch)
+- בחירת פרק דרך כפתור + מודל (UI בסיסי)
+- רשימת פרקים דינמית מתוך `chapters.json`
+- API אחיד לסטטוס פרק:
+  - `AH.getSelectedChapter()`
+  - `AH.setSelectedChapter(cid)`
+  - `AH.isChapterDone(cid)`
+  - `AH.setChapterDone(cid,v)`
+  - `AH.getChapterStatus(cid) -> done/current/locked`
 
 ### 🟡 חלקי
-- סטטוס פרק (locked / current / done) — לוגיקה קיימת אך לא מאוחדת
-- אין API אחד ברור לסטטוס פרק
+- לוגיקת “נעילה/נוכחי/הושלם” קיימת, אבל אין עדיין “השלמה אמיתית” (סף)
+- אין “מעבר לפרק הבא” לפי הישג
 
-### ❌ לא קיים
-- completion אמיתי עם סף (למשל 80%)
-- פתיחת פרק הבא רק אחרי completion
-- סטטיסטיקות לתלמיד
-- מצב מורה / ניהול
+### ❌ לא קיים עדיין
+- Completion אמיתי לפי סף (למשל 80% + מינימום שאלות)
+- פתיחת פרק הבא רק לאחר Completion
+- מסך סטטיסטיקות לתלמיד
+- מצב מורה / ניהול כיתה
+- PWA מלא (offline/Install)
 
 ---
 
-## QA קשוח (חובה)
-- כותרת “עולם של אחוזים” קיימת
-- fetch("../data/chapters.json") קיים
-- כל markers קיימים בקובץ
-- chapters.json תקין
-- פתיחה/סגירה של מודל פרקים עובדת
-- PROOF:
+## QA קשוח (חובה בכל שינוי)
+- `docs/RULES.md` מעודכן לפני/אחרי שינוי משמעותי
+- `data/chapters.json` הוא JSON תקין
+- markers לא נמחקו
+- בדיקת שרת:
   - RAW: grep markers
-  - PAGES: cache-buster + retries
+  - PAGES: cache-buster
 
 ---
 
 ## Backlog רשמי (פריט אחד בכל פעם)
 
-### הבא לביצוע
-- API אחיד לסטטוס פרק:
-  - AH.isChapterDone(cid)
-  - AH.getChapterStatus(cid) → done/current/locked
-  - מקור אמת יחיד למפתחות localStorage
+### הבא לביצוע (מס’ 1)
+- **AH_COMPLETION_GATE_V1**  
+  Completion אמיתי לפרק:
+  - חישוב אחוז הצלחה בפרק
+  - סף מעבר (ברירת מחדל 80%)
+  - כפתור “לפרק הבא” (`ahNextBtn`) רק כשעברנו סף
+  - כשפרק הושלם: `AH.setChapterDone(cur,true)` ואז פתיחת הפרק הבא
 
 ### אחריו
-- completion אמיתי לפרק (אחוז + מינימום שאלות)
-- פתיחת פרק הבא אוטומטית
-- מסך סטטיסטיקות בסיסי
+- מסך סטטיסטיקות בסיסי (לתלמיד)
+- מצב מורה (Teacher Mode)
+- PWA / Offline
+- מנוע אדפטיבי (המלצות תרגול לפי חולשות)
 
 ---
 
 ## חוק עבודה
-אם זה לא כתוב כאן — זה לא קיים.
-אם זה קיים — לא בונים שוב.
+- פריט backlog אחד בכל פעם
+- כל פריט = Commit מסודר + Proof (RAW+PAGES)

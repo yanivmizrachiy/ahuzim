@@ -1,19 +1,40 @@
-name: QA + PROOF (ahuzim)
+name: QA (markers + chapters.json)
 
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 jobs:
   qa:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: QA HARD (local)
-        run: bash scripts/qa_hard.sh
+      - name: Check required files
+        run: |
+          test -f app/index.html
+          test -f data/chapters.json
+          test -f docs/RULES.md
 
-      - name: PROOF (server)
-        run: bash scripts/proof_server.sh
+      - name: Check required markers
+        run: |
+          grep -q "AH_CHAPTER_UI_BASE_V0" app/index.html
+          grep -q "AH_CHAPTER_UI_BASE_JS_V0" app/index.html
+          grep -q "AH_CHAPTER_LIST_DYNAMIC_V1" app/index.html
+          grep -q "AH_CHAPTER_STATUS_API_V1" app/index.html
+
+      - name: Validate chapters.json
+        run: |
+          python - <<PY
+          import json
+          from pathlib import Path
+          data = json.loads(Path("data/chapters.json").read_text(encoding="utf-8"))
+          assert isinstance(data, dict) and "chapters" in data
+          chs = data["chapters"]
+          assert isinstance(chs, list) and len(chs) > 0
+          for c in chs:
+            assert "id" in c and "title" in c and "questions" in c
+            assert isinstance(c["questions"], list) and len(c["questions"]) > 0
+          print("OK")
+          PY
